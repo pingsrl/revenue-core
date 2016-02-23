@@ -93,7 +93,7 @@ module.exports = function(options, configurator, callback){
       debug('fetching form server');
       getInvoiceList(()=>{
         debug('rendering');
-        var now = moment.utc().format(DATE_FORMAT);
+        var now = moment.utc().subtract(10, 'minutes').format(DATE_FORMAT);
         db('updates').upsert({id:0, updated_since: now});
         debug('updated %s', now);
         callback(db, now, clioptions);
