@@ -1,6 +1,6 @@
 {
   "name": "revenue-core",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Revenue and Revenue-gui core lib",
   "main": "index.js",
   "scripts": {
