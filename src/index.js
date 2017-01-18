@@ -1,6 +1,5 @@
 var Harvest = require('harvest');
 var moment = require('moment');
-var numeral = require('numeral');
 var async = require('async');
 var qs = require('qs');
 var debug = require('debug')('revenue-core');

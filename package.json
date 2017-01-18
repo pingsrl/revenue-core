@@ -15,7 +15,6 @@
     "harvest": "https://github.com/G3z/node-harvest.git#ae0589537d",
     "lowdb": "^0.14.0",
     "moment": "^2.10.6",
-    "numeral": "^2.0.4",
     "qs": "^6.0.0"
   },
   "engine": "node >= 4.2.0"
