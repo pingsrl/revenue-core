@@ -9,47 +9,47 @@ var db = low(home_dir + '/' + filename);
 var _ = db._;
 
 db._.mixin({
-  upsert: function(collection, obj, key) {
+  upsert: function (collection, obj, key) {
     key = key || 'id';
     for (var i = 0; i < collection.length; i++) {
       var el = collection[i];
-      if(el[key] === obj[key]){
+      if (el[key] === obj[key]) {
         collection[i] = obj;
         return collection;
       }
     };
     collection.push(obj);
   },
-  exists: function(collection){
+  exists: function (collection) {
     return collection && collection.length > 0;
   }
 });
 
-module.exports = (configurator)=>{
-  return new Promise((ok, fail)=>{
+module.exports = (configurator) => {
+  return new Promise((ok, fail) => {
 
     // Do I have a config file ?
-    fs.access(home_dir + '/' + filename, fs.R_OK, (err) =>{
+    fs.access(home_dir + '/' + filename, fs.R_OK, (err) => {
       err ? fail() : ok();
     });
 
-  }).then(()=>{
+  }).then(() => {
 
     // Does the configuration exists ?
     return configurator(db);
 
-  }).then((config)=>{
+  }).then((config) => {
 
     config.id = 0;
-    db('config').upsert(config);
+    db.get('config').upsert(config);
 
-  }).catch((err)=>{
-
-    console.log(err);
-
-  }).then(()=>{
+  }).then(() => {
 
     return db;
+
+  }).catch((err) => {
+
+    console.log(err);
 
   });
 };
