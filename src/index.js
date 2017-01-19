@@ -36,14 +36,11 @@ module.exports = function (options, configurator, callback) {
       q.drain = cb;
       page++;
 
-      var query = qs.stringify({
+      var query = {
         updated_since: last_update,
         page: page
-      }, {
-        arrayFormat: 'brackets'
-      });
-
-      debug(query);
+      };
+      debug('Query %o', query);
 
       harvest.Invoices.list(query, (err, data) => {
         if (err) {

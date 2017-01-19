@@ -1,6 +1,6 @@
 {
   "name": "revenue-core",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Revenue and Revenue-gui core lib",
   "main": "src/index.js",
   "scripts": {
@@ -12,7 +12,7 @@
   "dependencies": {
     "async": "^2.1.4",
     "debug": "^2.2.0",
-    "harvest": "https://github.com/G3z/node-harvest.git#ae0589537d",
+    "harvest": "^0.2.0",
     "lowdb": "^0.14.0",
     "moment": "^2.10.6",
     "qs": "^6.0.0"
