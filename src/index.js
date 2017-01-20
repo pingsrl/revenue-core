@@ -19,7 +19,7 @@ module.exports = function (options, configurator, callback) {
 
     var last_update;
 
-    if (db.get('updates').exists()) {
+    if (db.has('updates').value()) {
       last_update = db.get('updates').first().value().updated_since;
     }
 
