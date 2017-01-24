@@ -50,7 +50,7 @@ module.exports = function (options, configurator, callback) {
         debug('invoices %o', data);
         for (var i = 0; i < data.length; i++) {
           var invoice = data[i].invoices;
-          db.get('invoices').upsert(invoice);
+          db.get('invoices').upsert(invoice).value();
           if (invoice.state === 'paid') {
             q.push(invoice);
           }
@@ -79,7 +79,7 @@ module.exports = function (options, configurator, callback) {
         }
         for (var i = 0; i < data.length; i++) {
           var payment = data[i].payment;
-          db.get('payments').upsert(payment);
+          db.get('payments').upsert(payment).value();
         };
         done();
       });
@@ -93,7 +93,7 @@ module.exports = function (options, configurator, callback) {
         db.get('updates').upsert({
           id: 0,
           updated_since: now
-        });
+        }).value();
         debug('updated %s', now);
         callback(db, now, clioptions);
       });

@@ -1,10 +1,10 @@
 {
   "name": "revenue-core",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Revenue and Revenue-gui core lib",
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./node_modules/.bin/ava -w"
   },
   "author": "G[3z]",
   "license": "MIT",
@@ -17,5 +17,8 @@
     "moment": "^2.10.6",
     "qs": "^6.0.0"
   },
-  "engine": "node >= 4.2.0"
+  "engine": "node >= 4.2.0",
+  "devDependencies": {
+    "ava": "^0.17.0"
+  }
 }

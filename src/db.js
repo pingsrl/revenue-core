@@ -1,12 +1,12 @@
 var fs = require('fs');
 var path = require('path');
 var low = require('lowdb');
+var debug = require('debug')('revenue-core');
 
 const home_dir = path.resolve(process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME']);
 const filename = '.revenue_config';
 
-var db = low(home_dir + '/' + filename);
-var _ = db._;
+var db = low(home_dir + '/' + filename, { storage: require('lowdb/lib/file-async') });
 
 db._.mixin({
   upsert: function (collection, obj, key) {
