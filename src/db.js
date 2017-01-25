@@ -6,11 +6,20 @@ var debug = require('debug')('revenue-core');
 const home_dir = path.resolve(process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME']);
 const filename = '.revenue_config';
 
-var db = low(home_dir + '/' + filename, { storage: require('lowdb/lib/file-async') });
+var db = low(home_dir + '/' + filename, {
+  storage: require('lowdb/lib/file-async')
+});
+
+db.defaults({
+  config: [],
+  updates: [],
+  invoices: [],
+  payments: [],
+})
+  .value();
 
 db._.mixin({
-  upsert: function (collection, obj, key) {
-    key = key || 'id';
+  upsert: function (collection, obj = {}, key = 'id') {
     for (var i = 0; i < collection.length; i++) {
       var el = collection[i];
       if (el[key] === obj[key]) {
