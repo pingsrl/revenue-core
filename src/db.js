@@ -12,7 +12,7 @@ var db = low(home_dir + '/' + filename, {
 
 db.defaults({
   config: [],
-  update: [],
+  updates: [],
   invoices: [],
   payments: [],
 })
