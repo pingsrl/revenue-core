@@ -40,6 +40,8 @@ const getInvoiceList = function(harvest, db, last_update, done) {
 			debug('getInvoiceList: page %s', page);
 			if (data.next_page) {
 				getInvoiceList(harvest, db, done);
+			} else if (QUEUE.length() === 0) {
+				done();
 			}
 		})
 		.catch(err => {
