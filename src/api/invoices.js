@@ -2,24 +2,27 @@ const async = require('async').default;
 const getPaymentList = require('./payments');
 const debug = require('debug')('revenue-core');
 
+let CONCURRENCY = 2;
 let QUEUE;
 let page = 0;
 
-const getInvoiceList = function(harvest, db, last_update, cb) {
+const getInvoiceList = function(harvest, db, last_update, done) {
 	if (QUEUE == undefined) {
 		QUEUE = async.queue(
 			(invoice, done) => getPaymentList(harvest, db, invoice, done),
-			4
+			CONCURRENCY
 		);
 		page = 0;
 	}
-	QUEUE.drain(cb);
+
+	QUEUE.drain(done);
 	page++;
 
 	var query = {
 		updated_since: last_update,
 		page: page
 	};
+
 	debug('Query %o', query);
 
 	harvest.invoices
@@ -36,11 +39,11 @@ const getInvoiceList = function(harvest, db, last_update, cb) {
 			});
 			debug('getInvoiceList: page %s', page);
 			if (data.next_page) {
-				getInvoiceList(harvest, db, cb);
+				getInvoiceList(harvest, db, done);
 			}
 		})
 		.catch(err => {
-			debug(err);
+			console.error(err);
 		});
 };
 

@@ -3,13 +3,15 @@ const debug = require('debug')('revenue-core');
 const getPaymentList = (harvest, db, invoice, done) => {
 	debug('getPaymentsList');
 	if (invoice.state !== 'paid') {
+		done();
 		return;
 	}
+
 	harvest.invoicePayments
 		.list(invoice.id)
 		.then(data => {
+			debug('Payments %o', data.invoice_payments);
 			data.invoice_payments.map(payment => {
-				debug('Payments %o', payment);
 				db.get('payments')
 					.upsert(payment)
 					.write();
@@ -17,7 +19,7 @@ const getPaymentList = (harvest, db, invoice, done) => {
 			done();
 		})
 		.catch(err => {
-			debug(err);
+			console.error(err);
 			done();
 		});
 };
