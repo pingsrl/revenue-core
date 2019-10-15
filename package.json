@@ -1,24 +1,24 @@
 {
-  "name": "revenue-core",
-  "version": "1.0.8",
-  "description": "Revenue and Revenue-gui core lib",
-  "main": "src/index.js",
-  "scripts": {
-    "test": "./node_modules/.bin/ava -w"
-  },
-  "author": "G[3z]",
-  "license": "MIT",
-  "repository": "https://github.com/pingsrl/revenue-core",
-  "dependencies": {
-    "async": "^2.1.4",
-    "debug": "^2.2.0",
-    "harvest": "^0.2.0",
-    "lowdb": "^0.14.0",
-    "moment": "^2.10.6",
-    "qs": "^6.0.0"
-  },
-  "engine": "node >= 4.2.0",
-  "devDependencies": {
-    "ava": "^0.17.0"
-  }
+	"name": "revenue-core",
+	"version": "1.1.0",
+	"description": "Revenue and Revenue-gui core lib",
+	"main": "src/index.js",
+	"scripts": {
+		"test": "./node_modules/.bin/ava -w"
+	},
+	"author": "G[3z]",
+	"license": "MIT",
+	"repository": "https://github.com/pingsrl/revenue-core",
+	"dependencies": {
+		"async": "^3.1.0",
+		"debug": "^4.1.1",
+		"harvest": "^2.2.5",
+		"lowdb": "^1.0.0",
+		"moment": "^2.24.0",
+		"qs": "^6.9.0"
+	},
+	"engine": "node >= 4.2.0",
+	"devDependencies": {
+		"ava": "^2.4.0"
+	}
 }

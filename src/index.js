@@ -1,105 +1,67 @@
-var Harvest = require('harvest');
-var moment = require('moment');
-var async = require('async');
-var qs = require('qs');
-var debug = require('debug')('revenue-core');
-var dbInit = require('./db');
+const Harvest = require('harvest').default;
+const async = require('async').default;
+const moment = require('moment');
+const qs = require('qs');
+const debug = require('debug')('revenue-core');
+const dbInit = require('./db');
+const getInvoicesList = require('./api/invoices');
 
-module.exports = function (options, configurator, callback) {
-  var clioptions = options;
+module.exports = function(options, configurator, callback) {
+	var clioptions = options;
 
-  debug('options: %j', clioptions);
-  return dbInit(configurator).then((db) => {
+	debug('options: %j', clioptions);
+	return dbInit(configurator).then(db => {
+		const CONFIG = db
+			.get('config')
+			.first()
+			.value();
 
-    const CONFIG = db.get('config').first().value();
-    const DATE_FORMAT = 'YYYY-MM-DD HH:mm';
-    const MIN_INTERVAL = 30 * 60;
+		const DATE_FORMAT = 'YYYY-DD-MM HH:mm:ss';
+		const MIN_INTERVAL = 30 * 60;
+		debug('config: %o', CONFIG);
+		const harvest = new Harvest(CONFIG);
 
-    debug('config: %o', CONFIG);
+		let last_update;
 
-    var last_update;
+		if (db.has('updates').value()) {
+			const update = db
+				.get('updates')
+				.first()
+				.value();
+			if (update) {
+				last_update = update.updated_since;
+			}
+		}
 
-    if (db.has('updates').value()) {
-      last_update = db.get('updates').first().value().updated_since;
-    }
+		if (clioptions.force || clioptions.year || !db.get('payments').exists()) {
+			last_update = undefined;
+		}
+		debug('last update: %s', last_update);
 
-    if (clioptions.force || !db.get('payments').exists()) {
-      last_update = undefined;
-    }
-    debug('last update: %s', last_update);
+		if (
+			!last_update ||
+			moment().unix() - moment(last_update).unix() > MIN_INTERVAL
+		) {
+			debug('fetching form server');
+			getInvoicesList(harvest, db, last_update, () => {
+				debug('rendering');
+				var now = moment
+					.utc()
+					.subtract(10, 'minutes')
+					.toISOString();
 
-    var harvest = new Harvest(CONFIG);
-    var page = 0;
-    var q = async.queue((invoice, done) => getPaymentList(invoice, done), 4);
-
-    var getInvoiceList = (cb) => {
-      q.drain = cb;
-      page++;
-
-      var query = {
-        updated_since: last_update,
-        page: page
-      };
-      debug('Query %o', query);
-
-      harvest.Invoices.list(query, (err, data) => {
-        if (err) {
-          debug(err);
-          return;
-        }
-        debug('invoices %o', data);
-        for (var i = 0; i < data.length; i++) {
-          var invoice = data[i].invoices;
-          db.get('invoices').upsert(invoice).value();
-          if (invoice.state === 'paid') {
-            q.push(invoice);
-          }
-        };
-        debug('getInvoiceList: page %s', page);
-        if (data.length) {
-          getInvoiceList(cb);
-        } else if (!q.length()) {
-          cb();
-        }
-      });
-    };
-
-    var getPaymentList = (invoice, done) => {
-      debug('getPaymentsList');
-      if (invoice.state !== 'paid') {
-        return;
-      }
-      harvest.InvoicePayments.paymentsByInvoice({
-        invoice_id: invoice.id
-      }, (err, data) => {
-        if (err) {
-          debug(err);
-          done();
-          return;
-        }
-        for (var i = 0; i < data.length; i++) {
-          var payment = data[i].payment;
-          db.get('payments').upsert(payment).value();
-        };
-        done();
-      });
-    };
-
-    if (!last_update || moment().unix() - moment(last_update, DATE_FORMAT).unix() > MIN_INTERVAL) {
-      debug('fetching form server');
-      getInvoiceList(() => {
-        debug('rendering');
-        var now = moment.utc().subtract(10, 'minutes').format(DATE_FORMAT);
-        db.get('updates').upsert({
-          id: 0,
-          updated_since: now
-        }).value();
-        debug('updated %s', now);
-        callback(db, now, clioptions);
-      });
-    } else {
-      debug('rendering');
-      callback(db, last_update, clioptions);
-    }
-  });
+				db.get('updates')
+					.upsert({
+						id: 0,
+						updated_since: now
+					})
+					.write();
+				debug('updated %s', now);
+				callback(db, now, clioptions);
+			});
+		} else {
+			debug('rendering');
+			callback(db, last_update, clioptions);
+		}
+	});
 };
