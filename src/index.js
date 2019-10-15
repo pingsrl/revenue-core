@@ -35,7 +35,8 @@ module.exports = function(options, configurator, callback) {
 
 		if (
 			clioptions.force ||
-			clioptions.year != undefined ||
+			(clioptions.year != undefined &&
+				clioptions.year != new Date().getFullYear()) ||
 			!db.get('payments').exists()
 		) {
 			last_update = undefined;
