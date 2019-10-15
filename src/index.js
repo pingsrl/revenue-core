@@ -33,7 +33,11 @@ module.exports = function(options, configurator, callback) {
 			}
 		}
 
-		if (clioptions.force || clioptions.year || !db.get('payments').exists()) {
+		if (
+			clioptions.force ||
+			clioptions.year !== new Date().getFullYear() ||
+			!db.get('payments').exists()
+		) {
 			last_update = undefined;
 		}
 		debug('last update: %s', last_update);
